@@ -4,6 +4,8 @@
 #include "Character/FPSCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Grenade/GrenadeActor.h"
+#include "HealthComponent.h"
+#include "FPSHUD.h"
 
 // Sets default values
 AFPSCharacter::AFPSCharacter()
@@ -53,6 +55,15 @@ void AFPSCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	check(GEngine != nullptr);
+
+	CurrentStamina = MaxStamina; // Initialize stamina
+
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddDynamic(this, &AFPSCharacter::OnHealthChanged);
+	}
+
+
 	
 }
 
@@ -89,6 +100,7 @@ void AFPSCharacter::Tick(float DeltaTime)
 			}
 		}
 	}
+	UpdateHUD();
 
 }
 
@@ -146,6 +158,11 @@ void AFPSCharacter::StartJump()
 void AFPSCharacter::EndJump()
 {
 	bPressedJump = false;
+}
+
+void AFPSCharacter::OnHealthChanged(float CurrentHealth, float MaxHealth)
+{
+	UpdateHUD(); // This will update the health bar when health changes
 }
 
 void AFPSCharacter::StartSprinting()
@@ -254,6 +271,28 @@ void AFPSCharacter::AddGrenades(int32 Amount)
 	if (CurrentGrenades > MaxGrenades)
 	{
 		CurrentGrenades = MaxGrenades; //Ensure grenades don't exceed maximum
+	}
+}
+
+void AFPSCharacter::UpdateHUD()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		AFPSHUD* HUD = Cast<AFPSHUD>(PC->GetHUD());
+		if (HUD && HUD->PlayerStatsHUDWidget)  // Direct access, no getter
+		{
+			// Update health bar
+			if (HealthComponent)
+			{
+				float HealthPercent = HealthComponent->GetCurrentHealth() / HealthComponent->GetMaxHealth();
+				HUD->PlayerStatsHUDWidget->UpdateHealthBar(HealthPercent);
+			}
+
+			// Update stamina bar
+			float StaminaPercent = CurrentStamina / MaxStamina;
+			HUD->PlayerStatsHUDWidget->UpdateStaminaBar(StaminaPercent);
+		}
 	}
 }
 

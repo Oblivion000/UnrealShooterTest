@@ -10,35 +10,35 @@
 #include "FPSHUD.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class GRAPHICS2_API AFPSHUD : public AHUD
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
 
 protected:
     // This will be drawn at the center of the screen.
     UPROPERTY(EditDefaultsOnly)
     UTexture2D* CrosshairTexture;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UUserWidget> PlayerHUDClass;
 
     UPROPERTY()
-	UUserWidget* PlayerHUDWidget;
+    UUserWidget* PlayerHUDWidget;
+
+    UPROPERTY(EditDefaultsOnly, Category = "HUD")
+    TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass;
+
 
 public:
+    // Called when the game starts
+    virtual void BeginPlay() override;
+
     // Primary draw call for the HUD.
     virtual void DrawHUD() override;
 
-private:
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = "HUD")
-	TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass;
-
-	UPROPERTY()
-	UPlayerStatsHUD* PlayerStatsHUDWidget;
+    UPROPERTY()
+    UPlayerStatsHUD* PlayerStatsHUDWidget;
 };

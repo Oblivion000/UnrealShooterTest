@@ -3,12 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "FPSHUD.h"
 #include "FPSProjectile_Bullet.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Grenade/GrenadeActor.h"
 #include "HealthComponent.h"
+#include "PlayerStatsHUD.h"
 #include "FPSCharacter.generated.h"
 
 UCLASS()
@@ -34,6 +38,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//Components
 
 	UPROPERTY(EditAnywhere)
 
@@ -75,8 +81,20 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
 	UHealthComponent* HealthComponent; //Health component to manage health
+
+	UFUNCTION()
+	void OnHealthChanged(float CurrentHealth, float MaxHealth); //Function to handle health changes
 	
-	
+	//UI Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass; //Class of the player stats HUD to spawn
+
+	UPROPERTY()
+	UPlayerStatsHUD* PlayerStatsWidget; //Instance of the player stats HUD
+
+	UFUNCTION()
+	void UpdateHUD();
+
 	//Grenade Properties
 
 
