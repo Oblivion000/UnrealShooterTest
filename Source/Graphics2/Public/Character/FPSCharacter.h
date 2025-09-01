@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "EnemyHealthWidget.h"
 #include "FPSHUD.h"
 #include "FPSProjectile_Bullet.h"
 #include "GameFramework/Character.h"
@@ -15,10 +16,15 @@
 #include "PlayerStatsHUD.h"
 #include "FPSCharacter.generated.h"
 
+class UPlayerHealthWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentStamina, float, MaxStamina);
+
 UCLASS()
 class GRAPHICS2_API AFPSCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
 
 public:
 	// Sets default values for this character's properties
@@ -75,6 +81,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stamina")
 	float StaminaRegenRate = 20.0f; //Rate at which stamina regenerates when not sprinting
 
+	UPROPERTY(BlueprintAssignable, Category = "Stamina")
+	FOnStaminaChanged OnStaminaChanged;
+
 	bool bCanSprint = true; //Flag to check if the character can sprint
 
 	//Health Properties
@@ -87,10 +96,10 @@ public:
 	
 	//UI Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass; //Class of the player stats HUD to spawn
+	TSubclassOf<UPlayerHealthWidget> PlayerHealthWidgetClass; //Class of the player stats HUD to spawn
 
 	UPROPERTY()
-	UPlayerStatsHUD* PlayerStatsWidget; //Instance of the player stats HUD
+	UPlayerHealthWidget* PlayerHealthWidget; //Instance of the player stats HUD
 
 	UFUNCTION()
 	void UpdateHUD();
@@ -132,4 +141,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Grenade")
 	void AddGrenades(int32 Amount); //Function to add a grenade to the character's inventory
+
+
+	// Enemy hover properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UEnemyHealthWidget> EnemyHealthWidgetClass;
+
+	UPROPERTY()
+	UEnemyHealthWidget* CurrentEnemyWidget;
+
+	UPROPERTY()
+	AABaseEnemy* CurrentHoveredEnemy;
+
+	void CheckForEnemyHover();
 };

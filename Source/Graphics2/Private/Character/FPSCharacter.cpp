@@ -6,6 +6,7 @@
 #include "Grenade/GrenadeActor.h"
 #include "HealthComponent.h"
 #include "FPSHUD.h"
+#include "PlayerHealthWidget.h"
 
 // Sets default values
 AFPSCharacter::AFPSCharacter()
@@ -63,7 +64,16 @@ void AFPSCharacter::BeginPlay()
 		HealthComponent->OnHealthChanged.AddDynamic(this, &AFPSCharacter::OnHealthChanged);
 	}
 
-
+	// Create and initialize the health widget
+	if (PlayerHealthWidgetClass)  // Note: changed variable name
+	{
+		PlayerHealthWidget = CreateWidget<UPlayerHealthWidget>(GetWorld(), PlayerHealthWidgetClass);
+		if (PlayerHealthWidget)
+		{
+			PlayerHealthWidget->AddToViewport();
+			PlayerHealthWidget->InitializePlayerWidget(this);
+		}
+	}
 	
 }
 
@@ -100,7 +110,13 @@ void AFPSCharacter::Tick(float DeltaTime)
 			}
 		}
 	}
-	UpdateHUD();
+	//UpdateHUD();
+
+	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+
+	//Check for Enemy Hover
+	CheckForEnemyHover();
+
 
 }
 
@@ -293,6 +309,66 @@ void AFPSCharacter::UpdateHUD()
 			float StaminaPercent = CurrentStamina / MaxStamina;
 			HUD->PlayerStatsHUDWidget->UpdateStaminaBar(StaminaPercent);
 		}
+	}
+}
+
+void AFPSCharacter::CheckForEnemyHover()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+	FVector TraceEnd = CameraLocation + (CameraRotation.Vector() * 1000.0f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation, TraceEnd, ECC_Pawn, QueryParams);
+
+	AABaseEnemy* HitEnemy = nullptr;
+	if (bHit)
+	{
+		HitEnemy = Cast<AABaseEnemy>(HitResult.GetActor());
+	}
+
+	// If we're looking at a different enemy or no enemy
+	if (HitEnemy != CurrentHoveredEnemy)
+	{
+		// Hide current widget if exists
+		if (CurrentEnemyWidget)
+		{
+			CurrentEnemyWidget->HideWidget();
+		}
+
+		CurrentHoveredEnemy = HitEnemy;
+
+		// Show new widget if we're looking at an enemy
+		if (CurrentHoveredEnemy && CurrentHoveredEnemy->IsAlive())
+		{
+			if (!CurrentEnemyWidget && EnemyHealthWidgetClass)
+			{
+				CurrentEnemyWidget = CreateWidget<UEnemyHealthWidget>(GetWorld(), EnemyHealthWidgetClass);
+				if (CurrentEnemyWidget)
+				{
+					CurrentEnemyWidget->AddToViewport();
+				}
+			}
+
+			if (CurrentEnemyWidget)
+			{
+				CurrentEnemyWidget->InitializeEnemyWidget(CurrentHoveredEnemy);
+				CurrentEnemyWidget->ShowWidget();
+			}
+		}
+	}
+	// Update the widget if we're still looking at the same enemy
+	else if (CurrentHoveredEnemy && CurrentEnemyWidget)
+	{
+		CurrentEnemyWidget->UpdateEnemyHealth();
 	}
 }
 

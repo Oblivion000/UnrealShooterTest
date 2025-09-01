@@ -72,4 +72,6 @@ public:
     UFUNCTION(BlueprintPure, Category = "Health")
     bool IsAlive() const { return CurrentHealth > 0.0f; }
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamgeEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 };
