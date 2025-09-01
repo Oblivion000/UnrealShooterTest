@@ -26,7 +26,7 @@ void AFPSHUD::BeginPlay()
         }
 
         // Create PlayerStatsHUD widget
-        if (PlayerStatsHUDClass)
+        /*if (PlayerStatsHUDClass)
         {
             PlayerStatsHUDWidget = CreateWidget<UPlayerStatsHUD>(PlayerController, PlayerStatsHUDClass);
             if (PlayerStatsHUDWidget)
@@ -37,7 +37,7 @@ void AFPSHUD::BeginPlay()
         else
         {
             UE_LOG(LogTemp, Warning, TEXT("PlayerStatsHUDClass is not assigned in FPSHUD!"));
-        }
+        }*/
     }
 }
 
