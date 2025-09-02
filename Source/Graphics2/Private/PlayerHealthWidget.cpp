@@ -16,7 +16,7 @@ void UPlayerHealthWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaT
     Super::NativeTick(MyGeometry, InDeltaTime);
 
     // Update stamina bar every frame since stamina changes in Tick
-    UpdateStaminaBar();
+    //UpdateStaminaBar();
 }
 
 void UPlayerHealthWidget::InitializePlayerWidget(AFPSCharacter* InPlayerCharacter)

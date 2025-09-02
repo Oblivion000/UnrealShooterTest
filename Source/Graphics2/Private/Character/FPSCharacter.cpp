@@ -296,19 +296,33 @@ void AFPSCharacter::UpdateHUD()
 	if (PC)
 	{
 		AFPSHUD* HUD = Cast<AFPSHUD>(PC->GetHUD());
-		if (HUD && HUD->PlayerStatsHUDWidget)  // Direct access, no getter
-		{
-			// Update health bar
-			if (HealthComponent)
-			{
-				float HealthPercent = HealthComponent->GetCurrentHealth() / HealthComponent->GetMaxHealth();
-				HUD->PlayerStatsHUDWidget->UpdateHealthBar(HealthPercent);
-			}
+		//if (HUD && HUD->PlayerStatsHUDWidget)  // Direct access, no getter
+		//{
+		//	// Update health bar
+		//	if (HealthComponent)
+		//	{
+		//		float HealthPercent = HealthComponent->GetCurrentHealth() / HealthComponent->GetMaxHealth();
+		//		HUD->PlayerStatsHUDWidget->UpdateHealthBar(HealthPercent);
+		//	}
 
-			// Update stamina bar
-			float StaminaPercent = CurrentStamina / MaxStamina;
-			HUD->PlayerStatsHUDWidget->UpdateStaminaBar(StaminaPercent);
+		//	// Update stamina bar
+		//	float StaminaPercent = CurrentStamina / MaxStamina;
+		//	HUD->PlayerStatsHUDWidget->UpdateStaminaBar(StaminaPercent);
+		//}
+
+		if (HUD && HUD->PlayerHealthWidgetInstance) // Make sure this exists
+		{
+			// Health: pass current and max health
+			HUD->PlayerHealthWidgetInstance->UpdateHealthBar(
+				HealthComponent->GetCurrentHealth(),
+				HealthComponent->GetMaxHealth()
+			);
+
+			// Stamina: just call the function (it reads from PlayerCharacter)
+			HUD->PlayerHealthWidgetInstance->UpdateStaminaBar();
 		}
+
+
 	}
 }
 

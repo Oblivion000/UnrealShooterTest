@@ -2,6 +2,8 @@
 
 #include "FPSHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "PlayerHealthWidget.h"
+#include "Character/FPSCharacter.h"
 
 void AFPSHUD::BeginPlay()
 {
@@ -12,7 +14,7 @@ void AFPSHUD::BeginPlay()
     if (PlayerController)
     {
         // Create PlayerHUD widget
-        if (PlayerHUDClass)
+        /*if (PlayerHUDClass)
         {
             PlayerHUDWidget = CreateWidget(GetWorld(), PlayerHUDClass);
             if (PlayerHUDWidget)
@@ -23,21 +25,17 @@ void AFPSHUD::BeginPlay()
         else
         {
             UE_LOG(LogTemp, Warning, TEXT("PlayerHUDClass is not assigned in FPSHUD!"));
-        }
+        }*/
 
-        // Create PlayerStatsHUD widget
-        /*if (PlayerStatsHUDClass)
+        if (PlayerHealthWidgetClass)
         {
-            PlayerStatsHUDWidget = CreateWidget<UPlayerStatsHUD>(PlayerController, PlayerStatsHUDClass);
-            if (PlayerStatsHUDWidget)
+            PlayerHealthWidgetInstance = CreateWidget<UPlayerHealthWidget>(GetWorld(), PlayerHealthWidgetClass);
+            if (PlayerHealthWidgetInstance)
             {
-                PlayerStatsHUDWidget->AddToViewport();
+                PlayerHealthWidgetInstance->AddToViewport();
+                PlayerHealthWidgetInstance->InitializePlayerWidget(Cast<AFPSCharacter>(GetOwningPawn()));
             }
         }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("PlayerStatsHUDClass is not assigned in FPSHUD!"));
-        }*/
     }
 }
 

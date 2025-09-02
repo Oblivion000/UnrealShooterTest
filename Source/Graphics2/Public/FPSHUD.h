@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "Engine/Canvas.h"
 #include "Blueprint/UserWidget.h"
+#include "PlayerHealthWidget.h"
 #include "PlayerStatsHUD.h"
 #include "FPSHUD.generated.h"
 
@@ -28,8 +29,9 @@ protected:
     UPROPERTY()
     UUserWidget* PlayerHUDWidget;
 
-    UPROPERTY(EditDefaultsOnly, Category = "HUD")
-    TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass;
+    /*UPROPERTY(EditDefaultsOnly, Category = "HUD")
+    TSubclassOf<UPlayerStatsHUD> PlayerStatsHUDClass;*/
+
 
 
 public:
@@ -39,6 +41,13 @@ public:
     // Primary draw call for the HUD.
     virtual void DrawHUD() override;
 
+   /* UPROPERTY()
+    UPlayerStatsHUD* PlayerStatsHUDWidget;*/
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+    TSubclassOf<UPlayerHealthWidget> PlayerHealthWidgetClass;
+
     UPROPERTY()
-    UPlayerStatsHUD* PlayerStatsHUDWidget;
+	UPlayerHealthWidget* PlayerHealthWidgetInstance;
+
 };

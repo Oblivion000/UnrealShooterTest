@@ -25,6 +25,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Health Widget")
     void InitializePlayerWidget(AFPSCharacter* InPlayerCharacter);
 
+    void UpdateHealthBar(float CurrentHealth, float MaxHealth);
+
+    void UpdateStaminaBar();
+
 protected:
     // Progress bar references - bind these in Blueprint
     UPROPERTY(meta = (BindWidget))
@@ -62,6 +66,4 @@ protected:
     void OnPlayerDied();
 
 private:
-    void UpdateHealthBar(float CurrentHealth, float MaxHealth);
-    void UpdateStaminaBar();
 };
