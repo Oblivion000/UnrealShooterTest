@@ -10,6 +10,8 @@ UHealthComponent::UHealthComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	CurrentHealth = MaxHealth; // Initialize current health to max health
+
 	// ...
 }
 
@@ -18,7 +20,7 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHealth = MaxHealth; // Initialize current health to max health
+	//CurrentHealth = MaxHealth; // Initialize current health to max health
 
 	// ...
 	
